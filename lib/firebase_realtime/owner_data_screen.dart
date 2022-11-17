@@ -68,7 +68,7 @@ class _OwnerDataState extends State<OwnerData> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SizedBox(
-                          height: 30,
+                          height: 25,
                         ),
                         Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,44 +143,89 @@ class _OwnerDataState extends State<OwnerData> {
                         SizedBox(
                           height: 10,
                         ),
-                        Container(
-                          height: 150,
-                          width: 320,
-                          decoration: BoxDecoration(
-                              // image: DecorationImage(
-                              //     image: AssetImage("assets/images/bg2.jpg"),
-                              //     fit: BoxFit.fill),
-
-                              gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                  colors: [
-                                    Colors.blueAccent,
-                                    Colors.white60,
-                                    Colors.white
-                                  ]),
-                              borderRadius: BorderRadius.circular(7)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Image.asset(
-                                "assets/images/price.jpg",
-                                fit: BoxFit.fill,
+                        Column(
+                          children: [
+                            Container(
+                              height: 150,
+                              width: 320,
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomLeft,
+                                      colors: [
+                                        Colors.blueAccent,
+                                        Colors.white60,
+                                        Colors.white
+                                      ]),
+                                  borderRadius: BorderRadius.circular(7)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/price.jpg",
+                                    fit: BoxFit.fill,
+                                  ),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    height: 100,
+                                    width: 100,
+                                    child: Text(
+                                      "Just @\n ₹20/lt.",
+                                      style:
+                                          GoogleFonts.montserrat(fontSize: 20),
+                                    ),
+                                    decoration: BoxDecoration(
+                                        // color: Colors.pinkAccent,
+                                        borderRadius: BorderRadius.circular(7)),
+                                  )
+                                ],
                               ),
-                              Container(
-                                alignment: Alignment.center,
-                                height: 100,
-                                width: 100,
-                                child: Text(
-                                  "Just @\n ₹20/lt.",
-                                  style: GoogleFonts.montserrat(fontSize: 20),
+                            ),
+                            Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(7),
+                                // color: Colors.white60,
+                              ),
+                              child: Center(
+                                child: ToggleButtons(
+                                  selectedColor: Colors.white,
+                                  fillColor: Colors.blue,
+                                  renderBorder: false,
+                                  borderRadius: BorderRadius.circular(7),
+                                  textStyle: TextStyle(fontSize: 20),
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: 110,
+                                      child: const Text(
+                                        'Cool',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 100,
+                                      child: const Text(
+                                        'Mild',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 110,
+                                      child: const Text(
+                                        'Hot',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                  onPressed: (int index) {
+                                    onToggleTapped(index);
+                                  },
+                                  isSelected: isSelected,
                                 ),
-                                decoration: BoxDecoration(
-                                    // color: Colors.pinkAccent,
-                                    borderRadius: BorderRadius.circular(7)),
-                              )
-                            ],
-                          ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: 10,
@@ -188,102 +233,65 @@ class _OwnerDataState extends State<OwnerData> {
                       ])),
             ),
       bottomNavigationBar: Container(
-        height: 130,
+        height: 90,
+        padding: const EdgeInsets.all(12),
         color: Colors.white,
-        child: Container(
+        child: Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          color: Colors.black,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7),
-                      // color: Colors.white60,
-                    ),
-                    child: Center(
-                      child: ToggleButtons(
-                        selectedColor: Colors.white,
-                        fillColor: Colors.black,
-                        renderBorder: true,
-                        borderRadius: BorderRadius.circular(7),
-                        textStyle: TextStyle(fontSize: 20),
-                        children: <Widget>[
-                          SizedBox(
-                            width: 100,
-                            child: const Text(
-                              'Cool',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 100,
-                            child: const Text(
-                              'Mild',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 100,
-                            child: const Text(
-                              'Hot',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                        onPressed: (int index) {
-                          onToggleTapped(index);
-                        },
-                        isSelected: isSelected,
-                      ),
-                    ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Text(
+                  numberOfItems.toString() +
+                      " Litres | "
+                          "₹" +
+                      (numberOfItems * 20).toString(),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 20.0,
+                    color: Colors.white,
                   ),
+                  textAlign: TextAlign.center,
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Text(
-                      numberOfItems.toString() +
-                          " Litres | "
-                              "₹" +
-                          (numberOfItems * 20).toString(),
-                      style: GoogleFonts.montserrat(
-                        fontSize: 20.0,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (numberOfItems > 0) {
-                              numberOfItems--;
-                            }
-                          });
-                        },
-                        icon: Icon(FontAwesomeIcons.minus, color: Colors.black),
-                        color: Colors.white),
-                    IconButton(
-                      icon: Icon(FontAwesomeIcons.add, color: Colors.black87),
-                      color: Colors.white,
+                CircleAvatar(
+                  backgroundColor: Colors.white30,
+                  child: IconButton(
                       onPressed: () {
                         setState(() {
-                          numberOfItems++;
+                          if (numberOfItems > 0) {
+                            numberOfItems--;
+                          }
                         });
                       },
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Check Out",
-                          style: GoogleFonts.montserrat(
-                              fontSize: 15, color: Colors.blueAccent),
-                        )),
-                  ],
+                      icon: Icon(FontAwesomeIcons.minus, color: Colors.white),
+                      color: Colors.white),
                 ),
+                CircleAvatar(
+                  backgroundColor: Colors.white30,
+                  child: IconButton(
+                    icon: Icon(
+                      FontAwesomeIcons.add,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    color: Colors.white,
+                    onPressed: () {
+                      setState(() {
+                        numberOfItems++;
+                      });
+                    },
+                  ),
+                ),
+                TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Check Out",
+                      style: GoogleFonts.montserrat(
+                          fontSize: 15, color: Colors.white),
+                    )),
               ],
             ),
           ),

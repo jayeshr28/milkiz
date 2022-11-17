@@ -1,12 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:milkiz/authentication/auth.dart';
-import 'package:milkiz/screens/home_page.dart';
-import 'package:milkiz/screens/main_page.dart';
+import 'package:milkiz/authentication/screens/login_page.dart';
 import 'package:provider/provider.dart';
 
-import 'authentication/login_screen.dart';
-import 'authentication/signup.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -38,12 +35,8 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            home: MainPage(),
-            routes: {
-              '/login_screen': (context) => SignIn(),
-              '/signup_screen': (context) => SignUp(),
-              '/home_page': (context) => HomePage()
-            },
+            home: LoginPage(),
+            routes: {},
           ),
         ));
   }
