@@ -1,8 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:milkiz/authentication/auth.dart';
 import 'package:milkiz/authentication/screens/login_page.dart';
-import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 
@@ -19,25 +17,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: Auth()),
-        ],
-        child: Consumer<Auth>(
-          builder: (
-            ctx,
-            auth,
-            _,
-          ) =>
-              MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            home: LoginPage(),
-            routes: {},
-          ),
-        ));
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: LoginPage(),
+        routes: {});
   }
 }

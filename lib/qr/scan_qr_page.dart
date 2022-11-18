@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:milkiz/firebase_realtime/owner_data_screen.dart';
 
 class ScanQRPage extends StatefulWidget {
-  const ScanQRPage({Key? key}) : super(key: key);
+  final User user;
+  const ScanQRPage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<ScanQRPage> createState() => _ScanQRPageState();
@@ -66,7 +68,10 @@ class _ScanQRPageState extends State<ScanQRPage> {
                 scanQR().then((value) => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => OwnerData(Ownerid: OwnerId))));
+                        builder: (context) => OwnerData(
+                              Ownerid: OwnerId,
+                              user: widget.user,
+                            ))));
               },
               child: Text(
                 "Open Scanner",

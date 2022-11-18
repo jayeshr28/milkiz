@@ -1,14 +1,37 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WalletPage extends StatefulWidget {
-  const WalletPage({Key? key}) : super(key: key);
+  final String uid;
+  const WalletPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<WalletPage> createState() => _WalletPageState();
 }
 
 class _WalletPageState extends State<WalletPage> {
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Map<dynamic, dynamic> user = {};
+  bool isLoading = false;
+  void getData() async {
+    final ref = FirebaseDatabase.instance.ref();
+    final snapshot = await ref.child('users/' + widget.uid).get();
+    user = snapshot.value as Map;
+    if (snapshot.exists) {
+      print(snapshot.value);
+    } else {
+      print('No data available.');
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +60,7 @@ class _WalletPageState extends State<WalletPage> {
                 style: GoogleFonts.poppins(fontSize: 20),
               ),
               Text(
-                "₹ 500",
+                "₹ " + user['money'].toString(),
                 style: GoogleFonts.poppins(fontSize: 40),
               ),
               SizedBox(
@@ -91,7 +114,7 @@ class _WalletPageState extends State<WalletPage> {
                   physics: NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   shrinkWrap: true,
-                  itemCount: 17,
+                  itemCount: 0,
                   itemBuilder: (context, index) {
                     return ListTile(
                       leading: CircleAvatar(

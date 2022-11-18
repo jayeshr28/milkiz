@@ -1,11 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:milkiz/firebase_realtime/checkout_screen.dart';
 
 class OwnerData extends StatefulWidget {
+  final User user;
   String Ownerid;
-  OwnerData({Key? key, required this.Ownerid}) : super(key: key);
+  OwnerData({Key? key, required this.Ownerid, required this.user})
+      : super(key: key);
 
   @override
   State<OwnerData> createState() => _OwnerDataState();
@@ -15,16 +19,33 @@ class _OwnerDataState extends State<OwnerData> {
   void initState() {
     super.initState();
     getData();
+    geUserData();
   }
 
   final List<bool> isSelected = [true, false, false];
   int numberOfItems = 0;
   bool isLoading = true;
   late Map<dynamic, dynamic> owner;
+  late Map<dynamic, dynamic> userData;
+
   void getData() async {
     final ref = FirebaseDatabase.instance.ref();
     final snapshot = await ref.child('Owners/' + widget.Ownerid).get();
     owner = snapshot.value as Map;
+    if (snapshot.exists) {
+      print(snapshot.value);
+    } else {
+      print('No data available.');
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void geUserData() async {
+    final ref = FirebaseDatabase.instance.ref();
+    final snapshot = await ref.child('users/' + widget.user.uid).get();
+    userData = snapshot.value as Map;
     if (snapshot.exists) {
       print(snapshot.value);
     } else {
@@ -87,7 +108,7 @@ class _OwnerDataState extends State<OwnerData> {
                               ),
                               Row(
                                 children: [
-                                  Text("₹ 500.0",
+                                  Text("₹ " + userData['money'].toString(),
                                       style:
                                           GoogleFonts.montserrat(fontSize: 20)),
                                   IconButton(
@@ -286,7 +307,18 @@ class _OwnerDataState extends State<OwnerData> {
                   ),
                 ),
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CheckOut(
+                                    owner: owner,
+                                    userD: userData,
+                                    user: widget.user,
+                                    numberOfItems: numberOfItems,
+                                    Ownerid: widget.Ownerid,
+                                  )));
+                    },
                     child: Text(
                       "Check Out",
                       style: GoogleFonts.montserrat(

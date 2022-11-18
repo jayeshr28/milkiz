@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:milkiz/screens/home_page.dart';
@@ -26,6 +27,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final databaseReference = FirebaseDatabase.instance.ref();
+    void createAccount(String uid) {
+      databaseReference.child("users/" + uid).set({
+        'money': 500,
+      });
+    }
+
     return GestureDetector(
       onTap: () {
         _focusName.unfocus();
@@ -174,6 +182,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                               ),
                                               ModalRoute.withName('/'),
                                             );
+                                            createAccount(user.uid);
                                           }
                                         }
                                       },
