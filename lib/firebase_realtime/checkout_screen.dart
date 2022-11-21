@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:milkiz/screens/home_page.dart';
 
 class CheckOut extends StatefulWidget {
@@ -53,14 +54,63 @@ class _CheckOutState extends State<CheckOut> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff37dbff),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Available Money - " + widget.userD['money'].toString()),
-            Text("Number Of Litres - " + widget.numberOfItems.toString()),
-            Text("Amount - " + (widget.numberOfItems * 20).toString()),
+            Image.asset("assets/images/transaction.jpg"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Available Money - ",
+                  style: GoogleFonts.poppins(),
+                ),
+                Text(
+                  "₹ " + widget.userD['money'].toString(),
+                  style: GoogleFonts.poppins(),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Number Of Litres - ",
+                  style: GoogleFonts.poppins(),
+                ),
+                Text(
+                  widget.numberOfItems.toString(),
+                  style: GoogleFonts.poppins(),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Amount - ",
+                  style: GoogleFonts.poppins(),
+                ),
+                Text(
+                  "₹ " + (widget.numberOfItems * 20).toString(),
+                  style: GoogleFonts.poppins(),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
             ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 onPressed: () {
                   updateWater(widget.numberOfItems);
                   updateWallet(widget.numberOfItems * 20);
@@ -69,8 +119,13 @@ class _CheckOutState extends State<CheckOut> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => HomePage(user: widget.user)));
+                  ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                      content: new Text(
+                    "Payment Successful! Order Placed",
+                    style: TextStyle(color: Colors.white),
+                  )));
                 },
-                child: Text("Place Order"))
+                child: Text("Place Order")),
           ],
         ),
       ),
