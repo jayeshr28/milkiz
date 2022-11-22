@@ -21,13 +21,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
-    getData();
+    getUserData();
   }
 
   late Map<dynamic, dynamic> userData;
   bool isLoading = true;
 
-  void getData() async {
+  void getUserData() async {
     final ref = FirebaseDatabase.instance.ref();
     final snapshot = await ref.child('users/' + widget.user.uid).get();
     userData = snapshot.value as Map;
@@ -41,9 +41,112 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
+        drawer: Drawer(
+          backgroundColor: Colors.white,
+          child: ListView(
+            children: [
+              DrawerHeader(
+                  child: Image.asset("assets/images/homepageWater.jpg")),
+              ListTile(
+                leading: Icon(
+                  Icons.person,
+                  color: Colors.black,
+                  size: 30,
+                ),
+                title: Text(
+                  "Profile",
+                  style: GoogleFonts.poppins(fontSize: 20),
+                ),
+              ),
+              InkWell(
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  leading: Icon(
+                    Icons.add_to_home_screen_outlined,
+                    color: Colors.black,
+                    size: 30,
+                  ),
+                  title: Text(
+                    "Log Out",
+                    style: GoogleFonts.poppins(fontSize: 20),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          toolbarHeight: 80,
+          backgroundColor: Colors.white,
+          title: isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              scaffoldKey.currentState!.openDrawer();
+                            },
+                            child: CircleAvatar(
+                              radius: 23,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.black,
+                                backgroundImage: AssetImage(
+                                    "assets/images/homepageWater.jpg"),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(widget.user.displayName.toString().toUpperCase(),
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 20, color: Colors.black)),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("₹ " + userData['money'].toString(),
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 20, color: Colors.black)),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WalletPage(
+                                            uid: widget.user.uid.toString(),
+                                          )));
+                            },
+                            icon: FaIcon(
+                              FontAwesomeIcons.wallet,
+                            ),
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                    ]),
+        ),
         backgroundColor: Colors.white,
         body: isLoading
             ? Center(
@@ -53,71 +156,6 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 35,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    await FirebaseAuth.instance.signOut();
-
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (context) => LoginPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: CircleAvatar(
-                                    radius: 22,
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.black,
-                                      backgroundImage: AssetImage(
-                                          "assets/images/homepageWater.jpg"),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                    widget.user.displayName
-                                        .toString()
-                                        .toUpperCase(),
-                                    style:
-                                        GoogleFonts.montserrat(fontSize: 20)),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text("₹ " + userData['money'].toString(),
-                                    style:
-                                        GoogleFonts.montserrat(fontSize: 20)),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => WalletPage(
-                                                  uid: widget.user.uid
-                                                      .toString(),
-                                                )));
-                                  },
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.wallet,
-                                  ),
-                                  color: Colors.black,
-                                ),
-                              ],
-                            ),
-                          ]),
-                    ),
                     Padding(
                       padding: const EdgeInsets.all(17.0),
                       child: Align(

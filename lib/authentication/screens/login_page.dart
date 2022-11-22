@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
-
+  var errorMessage = 'Authentication failed';
   final _focusEmail = FocusNode();
   final _focusPassword = FocusNode();
   bool _isObsecureText = true;
@@ -157,14 +157,17 @@ class _LoginPageState extends State<LoginPage> {
                                                 _isProcessing = true;
                                               });
 
-                                              User? user = await FireAuth
-                                                  .signInUsingEmailPassword(
-                                                email:
-                                                    _emailTextController.text,
-                                                password:
-                                                    _passwordTextController
-                                                        .text,
-                                              );
+                                              User? user =
+                                                  await FireAuth
+                                                      .signInUsingEmailPassword(
+                                                          email:
+                                                              _emailTextController
+                                                                  .text,
+                                                          password:
+                                                              _passwordTextController
+                                                                  .text,
+                                                          errorMessage:
+                                                              errorMessage);
 
                                               setState(() {
                                                 _isProcessing = false;
@@ -176,6 +179,24 @@ class _LoginPageState extends State<LoginPage> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HomePage(user: user),
+                                                  ),
+                                                );
+                                              } else {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (ctx) => AlertDialog(
+                                                    title: Text(
+                                                        'An Error Occurred!'),
+                                                    content: Text(errorMessage),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: Text('Okay'),
+                                                        onPressed: () {
+                                                          Navigator.of(ctx)
+                                                              .pop();
+                                                        },
+                                                      )
+                                                    ],
                                                   ),
                                                 );
                                               }

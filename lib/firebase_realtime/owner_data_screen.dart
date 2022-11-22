@@ -25,14 +25,15 @@ class _OwnerDataState extends State<OwnerData> {
   final List<bool> isSelected = [true, false, false];
   int numberOfItems = 0;
   bool isLoading = true;
-  late Map<dynamic, dynamic> owner;
+  late Map<dynamic, dynamic> owner = {};
   late Map<dynamic, dynamic> userData;
 
   void getData() async {
     final ref = FirebaseDatabase.instance.ref();
     final snapshot = await ref.child('Owners/' + widget.Ownerid).get();
-    owner = snapshot.value as Map;
+
     if (snapshot.exists) {
+      owner = snapshot.value as Map;
       print(snapshot.value);
     } else {
       print('No data available.');
@@ -42,14 +43,34 @@ class _OwnerDataState extends State<OwnerData> {
     });
   }
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   void geUserData() async {
     final ref = FirebaseDatabase.instance.ref();
     final snapshot = await ref.child('users/' + widget.user.uid).get();
     userData = snapshot.value as Map;
     if (snapshot.exists) {
-      print(snapshot.value);
+      setState(() {
+        isLoading = false;
+      });
     } else {
-      print('No data available.');
+      _showErrorDialog('No data available.');
     }
     setState(() {
       isLoading = false;
@@ -78,181 +99,192 @@ class _OwnerDataState extends State<OwnerData> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: isLoading
+      body: (isLoading)
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : SingleChildScrollView(
-              child: Container(
-                  margin: const EdgeInsets.all(20),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(
-                          height: 25,
-                        ),
-                        Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.arrow_back_ios)),
-                                  Text(
-                                    owner['shop_name'],
-                                    style: GoogleFonts.poppins(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text("₹ " + userData['money'].toString(),
-                                      style:
-                                          GoogleFonts.montserrat(fontSize: 20)),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.wallet,
-                                    ),
-                                    color: Colors.blue,
-                                  ),
-                                ],
-                              ),
-                            ]),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Hi! Welcome to our Water Shop",
-                          style: GoogleFonts.poppins(fontSize: 20),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 220,
-                          width: 320,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7),
-                              image: DecorationImage(
-                                  image: AssetImage("assets/images/shop.jpg"),
-                                  fit: BoxFit.fill)),
-                        ),
-                        Container(
-                          width: 320,
-                          height: 120,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(
-                                "Water Available \n   " +
-                                    owner['available_water'].toString() +
-                                    " Litres",
-                                style: GoogleFonts.montserrat(fontSize: 20),
-                              ),
-                              Image.asset(
-                                "assets/images/waterAnim.gif",
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Column(
+          : owner['shop_name'] == null
+              ? Center(
+                  child: Text("No Data Available"),
+                )
+              : SingleChildScrollView(
+                  child: Container(
+                      margin: const EdgeInsets.all(20),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            SizedBox(
+                              height: 25,
+                            ),
+                            Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          icon: Icon(Icons.arrow_back_ios)),
+                                      Text(
+                                        owner!['shop_name'],
+                                        style:
+                                            GoogleFonts.poppins(fontSize: 20),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text("₹ " + userData!['money'].toString(),
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 20)),
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.wallet,
+                                        ),
+                                        color: Colors.blue,
+                                      ),
+                                    ],
+                                  ),
+                                ]),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Hi! Welcome to our Water Shop",
+                              style: GoogleFonts.poppins(fontSize: 20),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             Container(
-                              height: 150,
+                              height: 220,
                               width: 320,
                               decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topRight,
-                                      end: Alignment.bottomLeft,
-                                      colors: [
-                                        Colors.blueAccent,
-                                        Colors.white60,
-                                        Colors.white
-                                      ]),
-                                  borderRadius: BorderRadius.circular(7)),
+                                  borderRadius: BorderRadius.circular(7),
+                                  image: DecorationImage(
+                                      image:
+                                          AssetImage("assets/images/shop.jpg"),
+                                      fit: BoxFit.fill)),
+                            ),
+                            Container(
+                              width: 320,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Image.asset(
-                                    "assets/images/price.jpg",
-                                    fit: BoxFit.fill,
+                                  Text(
+                                    "Water Available \n   " +
+                                        owner!['available_water'].toString() +
+                                        " Litres",
+                                    style: GoogleFonts.montserrat(fontSize: 20),
                                   ),
-                                  Container(
-                                    alignment: Alignment.center,
-                                    height: 100,
-                                    width: 100,
-                                    child: Text(
-                                      "Just @\n ₹20/lt.",
-                                      style:
-                                          GoogleFonts.montserrat(fontSize: 20),
-                                    ),
-                                    decoration: BoxDecoration(
-                                        // color: Colors.pinkAccent,
-                                        borderRadius: BorderRadius.circular(7)),
+                                  Image.asset(
+                                    "assets/images/waterAnim.gif",
                                   )
                                 ],
                               ),
                             ),
-                            Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                // color: Colors.white60,
-                              ),
-                              child: Center(
-                                child: ToggleButtons(
-                                  selectedColor: Colors.white,
-                                  fillColor: Colors.blue,
-                                  renderBorder: false,
-                                  borderRadius: BorderRadius.circular(7),
-                                  textStyle: TextStyle(fontSize: 20),
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: 110,
-                                      child: const Text(
-                                        'Cool',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      child: const Text(
-                                        'Mild',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 110,
-                                      child: const Text(
-                                        'Hot',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ],
-                                  onPressed: (int index) {
-                                    onToggleTapped(index);
-                                  },
-                                  isSelected: isSelected,
-                                ),
-                              ),
+                            SizedBox(
+                              height: 10,
                             ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                      ])),
-            ),
+                            Column(
+                              children: [
+                                Container(
+                                  height: 150,
+                                  width: 320,
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topRight,
+                                          end: Alignment.bottomLeft,
+                                          colors: [
+                                            Colors.blueAccent,
+                                            Colors.white60,
+                                            Colors.white
+                                          ]),
+                                      borderRadius: BorderRadius.circular(7)),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/price.jpg",
+                                        fit: BoxFit.fill,
+                                      ),
+                                      Container(
+                                        alignment: Alignment.center,
+                                        height: 100,
+                                        width: 100,
+                                        child: Text(
+                                          "Just @\n ₹20/lt.",
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 20),
+                                        ),
+                                        decoration: BoxDecoration(
+                                            // color: Colors.pinkAccent,
+                                            borderRadius:
+                                                BorderRadius.circular(7)),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7),
+                                    // color: Colors.white60,
+                                  ),
+                                  child: Center(
+                                    child: ToggleButtons(
+                                      selectedColor: Colors.white,
+                                      fillColor: Colors.blue,
+                                      renderBorder: false,
+                                      borderRadius: BorderRadius.circular(7),
+                                      textStyle: TextStyle(fontSize: 20),
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 110,
+                                          child: const Text(
+                                            'Cool',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 100,
+                                          child: const Text(
+                                            'Mild',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 110,
+                                          child: const Text(
+                                            'Hot',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                      onPressed: (int index) {
+                                        onToggleTapped(index);
+                                      },
+                                      isSelected: isSelected,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ])),
+                ),
       bottomNavigationBar: Container(
         height: 90,
         padding: const EdgeInsets.all(12),
@@ -308,16 +340,21 @@ class _OwnerDataState extends State<OwnerData> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CheckOut(
-                                    owner: owner,
-                                    userD: userData,
-                                    user: widget.user,
-                                    numberOfItems: numberOfItems,
-                                    Ownerid: widget.Ownerid,
-                                  )));
+                      if (numberOfItems != 0) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CheckOut(
+                                      owner: owner,
+                                      userD: userData,
+                                      user: widget.user,
+                                      numberOfItems: numberOfItems,
+                                      Ownerid: widget.Ownerid,
+                                    )));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Please add atleast one litre")));
+                      }
                     },
                     child: Text(
                       "Check Out",

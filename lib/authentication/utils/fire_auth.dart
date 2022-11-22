@@ -28,16 +28,17 @@ class FireAuth with ChangeNotifier {
         print('The account already exists for that email.');
       }
     } catch (e) {
-      print(e);
+      throw e;
     }
 
     return user;
   }
 
   // For signing in an user (have already registered)
-  static Future<User?> signInUsingEmailPassword({
+  static Future<dynamic> signInUsingEmailPassword({
     required String email,
     required String password,
+    required String errorMessage,
   }) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
@@ -48,12 +49,21 @@ class FireAuth with ChangeNotifier {
         password: password,
       );
       user = userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided.');
+    } on FirebaseAuthException catch (error) {
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'This is not a valid email address';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is too weak.';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find a user with that email.';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid password.';
       }
+    } catch (error) {
+      const errorMessage =
+          'Could not authenticate you. Please try again later.';
     }
 
     return user;
